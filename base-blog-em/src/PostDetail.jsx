@@ -24,9 +24,9 @@ async function updatePost(postId) {
 }
 
 export function PostDetail({ post }) {
-  // replace with useQuery
   const { data, isLoading, isError, error } = useQuery(['postComments', post.id], () => fetchComments(post.id));
   const deleteMutation = useMutation((postId) => deletePost(postId));
+  const updateMutation = useMutation((postId) => updatePost(postId));
   if (isLoading) {
     return <h2>Loading...</h2>
   }
@@ -40,7 +40,7 @@ export function PostDetail({ post }) {
   return (
     <>
       <h3 style={{ color: "blue" }}>{post.title}</h3>
-      <button onClick={() => deleteMutation.mutate(post.id)}>Delete</button> <button>Update title</button>
+      <button onClick={() => deleteMutation.mutate(post.id)}>Delete</button> <button onClick={() => updateMutation.mutate(post.id, 'update')}>Update title</button>
       { deleteMutation.isLoading && (
         <p style={{ color: 'gray' }}>Deleting the post</p>
       )}
@@ -49,6 +49,15 @@ export function PostDetail({ post }) {
       )}
       { deleteMutation.isSuccess && (
         <p style={{ color: 'green' }}>Deleted the post (but not)</p>
+      )}
+      { updateMutation.isLoading && (
+        <p style={{ color: 'gray' }}>Updating the post</p>
+      )}
+      { updateMutation.isError && (
+        <p style={{ color: 'red' }}>Error updating the post</p>
+      )}
+      { updateMutation.isSuccess && (
+        <p style={{ color: 'green' }}>Updated the post (but not)</p>
       )}
       <p>{post.body}</p>
       <h4>Comments</h4>
