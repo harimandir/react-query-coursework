@@ -12,7 +12,7 @@ function App() {
       <div className="App">
         <h1>Infinite SWAPI</h1>
         <InfinitePeople />
-        {/* <InfiniteSpecies /> */}
+        <InfiniteSpecies />
       </div>
       <ReactQueryDevtools />
     </QueryClientProvider>
