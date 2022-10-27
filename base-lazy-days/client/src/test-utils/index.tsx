@@ -1,17 +1,28 @@
 import { render, RenderResult } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 
-// import { defaultQueryClientOptions } from '../react-query/queryClient';
+import { generateQueryClient } from '../react-query/queryClient';
+
+setLogger({
+  log: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+});
 
 // make a function to generate a unique query client for each test
-const generateQueryClient = () => new QueryClient();
+const generateTestQueryClient = () => {
+  const queryClient = generateQueryClient();
+  const options = queryClient.getDefaultOptions();
+  options.queries = { ...options.queries, retry: false };
+  return queryClient;
+};
 
 export function renderWithQueryClient(
   ui: ReactElement,
   client?: QueryClient,
 ): RenderResult {
-  const queryClient = client ?? generateQueryClient();
+  const queryClient = client ?? generateTestQueryClient();
   return render(
     <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
   );
@@ -19,7 +30,7 @@ export function renderWithQueryClient(
 
 // from https://tkdodo.eu/blog/testing-react-query#for-custom-hooks
 // export const createQueryClientWrapper = () => {
-//   const queryClient = generateQueryClient();
+//   const queryClient = generateTestQueryClient();
 //   return ({ children }) => (
 //     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 //   );
