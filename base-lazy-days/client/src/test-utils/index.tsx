@@ -1,4 +1,5 @@
 import { render, RenderResult } from '@testing-library/react';
+import { WrapperComponent } from '@testing-library/react-hooks';
 import { ReactElement } from 'react';
 import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 
@@ -29,9 +30,9 @@ export function renderWithQueryClient(
 }
 
 // from https://tkdodo.eu/blog/testing-react-query#for-custom-hooks
-// export const createQueryClientWrapper = () => {
-//   const queryClient = generateTestQueryClient();
-//   return ({ children }) => (
-//     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-//   );
-// };
+export const createQueryClientWrapper = (): WrapperComponent<unknown> => {
+  const queryClient = generateTestQueryClient();
+  return ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
