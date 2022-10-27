@@ -1,9 +1,34 @@
-import { screen } from '@testing-library/react';
+import { render, RenderResult, screen } from '@testing-library/react';
 import { rest } from 'msw';
+import { ReactElement } from 'react';
+import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 
 import { server } from '../../../mocks/server';
-import { renderWithQueryClient } from '../../../test-utils';
+import { generateQueryClient } from '../../../react-query/queryClient';
 import { AllStaff } from '../AllStaff';
+
+setLogger({
+  log: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+});
+
+const generateTestQueryClient = () => {
+  const queryClient = generateQueryClient();
+  const options = queryClient.getDefaultOptions();
+  options.queries = { ...options.queries, retry: 0 };
+  return queryClient;
+};
+
+const renderWithQueryClient = (
+  ui: ReactElement,
+  client?: QueryClient,
+): RenderResult => {
+  const queryClient = client ?? generateTestQueryClient();
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+  );
+};
 
 test('renders response from query', async () => {
   renderWithQueryClient(<AllStaff />);
